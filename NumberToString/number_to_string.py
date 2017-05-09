@@ -1,3 +1,5 @@
+import unittest
+
 inwords={ 0:'Zero', 1:'One', 2:'Two', 3:'Three', 4:'Four', 5:'Five', 6:'Six', 
           7:'Seven', 8:'Eight', 9:'Nine', 10:'Ten', 11:'Eleven', 12:'Twelve',
           13:'Thirteen', 14:'Fourteen', 15:'Fifteen', 16:'Sixteen', 
@@ -16,8 +18,6 @@ suffix={1000:'Thousand',
         1000000000000000000000000000:'Nonillion',
         1000000000000000000000000000000:'Decillion'}
 
-
-
 def getTensAndOnes(n):
     if n<100 and n>0:
         r=n%10
@@ -26,8 +26,6 @@ def getTensAndOnes(n):
         else:
             q=n-r
             return inwords[q]+' '+inwords[r]
-    else:
-        return ''
     
 def getHundred(n):
     if n<1000 and n>99:
@@ -41,7 +39,7 @@ def getHundred(n):
         return getTensAndOnes(n)
             
             
-def getInWords(n, i):
+def getPositiveInWords(n, i):
     if n==0:
         return inwords[n]
     if n<1000:
@@ -49,19 +47,41 @@ def getInWords(n, i):
     d=i//1000
     r=n%d
     q=n//d
-    if r==0:
-        return getInWords(q, d)+' '+suffix[d]
+    if q!=0:
+        if r==0:
+            return getPositiveInWords(q, d)+' '+suffix[d]
+        else:
+            return getPositiveInWords(q, d)+' '+suffix[d]+', '+getPositiveInWords(r, d)   
     else:
-        return getInWords(q, d)+' '+suffix[d]+', '+getInWords(r, d)   
+        return getPositiveInWords(r, d)
 
-def main():       
-    n=int(input().strip())
+def getNumInWords(n):
     c=len(str(n))
     l = 10**(c-1)
     i=1000
     while i<=l:
         i*=1000
-    print(getInWords(n, i))
+    if n<0 :
+        return 'Minus ' +  getPositiveInWords(n*-1, i)
+    else:
+        return getPositiveInWords(n, i)
     
+class Test(unittest.TestCase):
+    '''Test Cases'''
+    data = [
+            (0, 'Zero'),
+            (4, 'Four'),
+            (-45, 'Minus Forty Five'),
+            (305, 'Three Hundred and Five'),
+            (1005, 'One Thousand, Five'),
+            (501000006009, 'Five Hundred and One Billion, Six Thousand, Nine'),
+            (5545555, 'Five Million, Five Hundred and Forty Five Thousand, Five Hundred and Fifty Five')
+           ]
+           
+    def test(self):
+        for [n, expected] in self.data:
+            actual = getNumInWords(n)
+            self.assertEqual(actual, expected)
+
 if __name__ == "__main__":
-    main()
+    unittest.main()
