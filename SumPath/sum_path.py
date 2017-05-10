@@ -1,4 +1,6 @@
 import copy
+import unittest
+
 class Node():
     def __init__(self, data):
         self.data=data
@@ -43,7 +45,24 @@ def sumOfPath(root, s, result, results):
     sumOfPath(root.right,s,result,results)
     result.pop()    
     
-arr=[4,7,6,9,2,3,1,2,1,8,3,8,10]
-root = makeTree(arr)
-results=sumOfPaths(root, 13)
-print(results)
+class Test(unittest.TestCase):
+    '''Test Cases'''
+    data = [
+            (13, [[4, 7, 2], [4, 6, 3]]),
+            (21, [[4, 7, 9, 1], [4, 7, 2, 8], [4, 6, 3, 8]]),
+            (34, []),
+            (16, [[4, 7, 2, 3]]),
+            (4, [[4]]),
+            (10, [[4, 6]]),
+            (11, [[4, 7], [4, 6, 1]])
+           ]
+           
+    def test(self):
+        arr=[4,7,6,9,2,3,1,2,1,8,3,8,10]
+        root = makeTree(arr)
+        for [n, expected] in self.data:
+            actual = sumOfPaths(root, n)
+            self.assertEqual(actual, expected)
+
+if __name__ == "__main__":
+    unittest.main()
